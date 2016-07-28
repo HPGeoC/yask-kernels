@@ -47,11 +47,6 @@ _Pragma("omp parallel for schedule(static,1) proc_bind(close)")
  // Number of iterations to get from begin_bzv to (but not including) end_bzv, stepping by step_bzv.
  const idx_t num_bzv = ((end_bzv - begin_bzv) + (step_bzv - 1)) / step_bzv;
 
- // Check prefetch settings.
-#if PFDL2 <= PFDL1
-#error "PFDL2 <= PFDL1"
-#endif
-
  // Prime prefetch to L1.
 _Pragma("noprefetch")
  for (idx_t loop_index_bzv = 0; loop_index_bzv < PFDL1; loop_index_bzv++) {
@@ -64,7 +59,7 @@ _Pragma("noprefetch")
  const idx_t stop_bzv = std::min(start_bzv + step_bzv, end_bzv);
 
  // Prefetch to L1.
-  prefetch_L1_cluster(context, bt, start_bnv, start_bxv, start_byv, start_bzv, stop_bnv, stop_bxv, stop_byv, stop_bzv);
+  prefetch_cluster<L1>(context, bt, start_bnv, start_bxv, start_byv, start_bzv, stop_bnv, stop_bxv, stop_byv, stop_bzv);
  }
 
  // Computation loop.
@@ -92,7 +87,7 @@ _Pragma("noprefetch")
  const idx_t stop_bzv_pfL1 = std::min(start_bzv_pfL1 + step_bzv, end_bzv);
 
  // Prefetch to L1.
-  prefetch_L1_cluster_bzv(context, bt, start_bnv, start_bxv, start_byv, start_bzv_pfL1, stop_bnv, stop_bxv, stop_byv, stop_bzv_pfL1);
+  prefetch_cluster_bzv<L1>(context, bt, start_bnv, start_bxv, start_byv, start_bzv_pfL1, stop_bnv, stop_bxv, stop_byv, stop_bzv_pfL1);
  }
  }
  }

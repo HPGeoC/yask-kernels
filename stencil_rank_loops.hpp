@@ -1,21 +1,10 @@
 /*
- * 5-D loop code.
+ * 4-D loop code.
  * Generated automatically from the following pseudo-code:
  *
- * loop(dt) { loop(dn,dx,dy,dz) { calc(region); } }
+ * loop(dn,dx,dy,dz) { calc(region(start_dt, stop_dt, stencil_set)); }
  *
  */
-
- // Number of iterations to get from begin_dt to (but not including) end_dt, stepping by step_dt.
- const idx_t num_dt = ((end_dt - begin_dt) + (step_dt - 1)) / step_dt;
- for (idx_t loop_index_dt = 0; loop_index_dt < num_dt; loop_index_dt++) {
-
- // Zero-based, unit-stride index var for dt.
- idx_t index_dt = loop_index_dt;
-
- // This value of index_dt covers dt from start_dt to stop_dt-1.
- const idx_t start_dt = begin_dt + (index_dt * step_dt);
- const idx_t stop_dt = std::min(start_dt + step_dt, end_dt);
 
  // Number of iterations to get from begin_dn to (but not including) end_dn, stepping by step_dn.
  const idx_t num_dn = ((end_dn - begin_dn) + (step_dn - 1)) / step_dn;
@@ -64,7 +53,6 @@
  const idx_t stop_dz = std::min(start_dz + step_dz, end_dz);
 
  // Computation.
-  calc_region(context, start_dt, start_dn, start_dx, start_dy, start_dz, stop_dt, stop_dn, stop_dx, stop_dy, stop_dz);
- }
+  calc_region(context, start_dt, stop_dt, stencil_set, start_dn, start_dx, start_dy, start_dz, stop_dn, stop_dx, stop_dy, stop_dz);
  }
 // End of generated code.

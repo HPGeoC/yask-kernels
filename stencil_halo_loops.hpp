@@ -2,68 +2,60 @@
  * 4-D loop code.
  * Generated automatically from the following pseudo-code:
  *
- * serpentine omp loop(rnv,rxv,ryv) { loop(rzv) { calc(halo(rt)); } }
+ * omp loop(nv,xv,yv,zv) { calc(halo(t)); }
  *
  */
 
- // Number of iterations to get from begin_rnv to (but not including) end_rnv, stepping by step_rnv.
- const idx_t num_rnv = ((end_rnv - begin_rnv) + (step_rnv - 1)) / step_rnv;
+ // Number of iterations to get from begin_nv to (but not including) end_nv, stepping by step_nv.
+ const idx_t num_nv = ((end_nv - begin_nv) + (step_nv - 1)) / step_nv;
 
- // Number of iterations to get from begin_rxv to (but not including) end_rxv, stepping by step_rxv.
- const idx_t num_rxv = ((end_rxv - begin_rxv) + (step_rxv - 1)) / step_rxv;
+ // Number of iterations to get from begin_xv to (but not including) end_xv, stepping by step_xv.
+ const idx_t num_xv = ((end_xv - begin_xv) + (step_xv - 1)) / step_xv;
 
- // Number of iterations to get from begin_ryv to (but not including) end_ryv, stepping by step_ryv.
- const idx_t num_ryv = ((end_ryv - begin_ryv) + (step_ryv - 1)) / step_ryv;
+ // Number of iterations to get from begin_yv to (but not including) end_yv, stepping by step_yv.
+ const idx_t num_yv = ((end_yv - begin_yv) + (step_yv - 1)) / step_yv;
 
- // Number of iterations in loop collapsed across rnv, rxv, ryv dimensions.
- const idx_t num_rnv_rxv_ryv = (idx_t)num_rnv * (idx_t)num_rxv * (idx_t)num_ryv;
+ // Number of iterations to get from begin_zv to (but not including) end_zv, stepping by step_zv.
+ const idx_t num_zv = ((end_zv - begin_zv) + (step_zv - 1)) / step_zv;
+
+ // Number of iterations in loop collapsed across nv, xv, yv, zv dimensions.
+ const idx_t num_nv_xv_yv_zv = (idx_t)num_nv * (idx_t)num_xv * (idx_t)num_yv * (idx_t)num_zv;
+
+ // Computation loop.
 
  // Distribute iterations among OpenMP threads.
 _Pragma("omp parallel for schedule(dynamic,1)")
- for (idx_t loop_index_rnv_rxv_ryv = 0; loop_index_rnv_rxv_ryv < num_rnv_rxv_ryv; loop_index_rnv_rxv_ryv++) {
+ for (idx_t loop_index_nv_xv_yv_zv = 0; loop_index_nv_xv_yv_zv < num_nv_xv_yv_zv; loop_index_nv_xv_yv_zv++) {
 
- // Zero-based, unit-stride index var for rnv.
- idx_t index_rnv = loop_index_rnv_rxv_ryv / (num_rxv*num_ryv);
+ // Zero-based, unit-stride index var for nv.
+ idx_t index_nv = loop_index_nv_xv_yv_zv / (num_xv*num_yv*num_zv);
 
- // Zero-based, unit-stride index var for rxv.
- idx_t index_rxv = (loop_index_rnv_rxv_ryv / (num_ryv)) % num_rxv;
+ // Zero-based, unit-stride index var for xv.
+ idx_t index_xv = (loop_index_nv_xv_yv_zv / (num_yv*num_zv)) % num_xv;
 
- // Reverse direction of index_rxv after every iteration of index_rnv for  'serpentine' path.
- if ((index_rnv & 1) == 1) index_rxv = num_rxv - index_rxv - 1;
+ // Zero-based, unit-stride index var for yv.
+ idx_t index_yv = (loop_index_nv_xv_yv_zv / (num_zv)) % num_yv;
 
- // Zero-based, unit-stride index var for ryv.
- idx_t index_ryv = (loop_index_rnv_rxv_ryv) % num_ryv;
+ // Zero-based, unit-stride index var for zv.
+ idx_t index_zv = (loop_index_nv_xv_yv_zv) % num_zv;
 
- // Reverse direction of index_ryv after every iteration of index_rxv for  'serpentine' path.
- if ((index_rxv & 1) == 1) index_ryv = num_ryv - index_ryv - 1;
+ // This value of index_nv covers nv from start_nv to stop_nv-1.
+ const idx_t start_nv = begin_nv + (index_nv * step_nv);
+ const idx_t stop_nv = std::min(start_nv + step_nv, end_nv);
 
- // This value of index_rnv covers rnv from start_rnv to stop_rnv-1.
- const idx_t start_rnv = begin_rnv + (index_rnv * step_rnv);
- const idx_t stop_rnv = std::min(start_rnv + step_rnv, end_rnv);
+ // This value of index_xv covers xv from start_xv to stop_xv-1.
+ const idx_t start_xv = begin_xv + (index_xv * step_xv);
+ const idx_t stop_xv = std::min(start_xv + step_xv, end_xv);
 
- // This value of index_rxv covers rxv from start_rxv to stop_rxv-1.
- const idx_t start_rxv = begin_rxv + (index_rxv * step_rxv);
- const idx_t stop_rxv = std::min(start_rxv + step_rxv, end_rxv);
+ // This value of index_yv covers yv from start_yv to stop_yv-1.
+ const idx_t start_yv = begin_yv + (index_yv * step_yv);
+ const idx_t stop_yv = std::min(start_yv + step_yv, end_yv);
 
- // This value of index_ryv covers ryv from start_ryv to stop_ryv-1.
- const idx_t start_ryv = begin_ryv + (index_ryv * step_ryv);
- const idx_t stop_ryv = std::min(start_ryv + step_ryv, end_ryv);
-
- // Number of iterations to get from begin_rzv to (but not including) end_rzv, stepping by step_rzv.
- const idx_t num_rzv = ((end_rzv - begin_rzv) + (step_rzv - 1)) / step_rzv;
-
- // Computation loop.
- for (idx_t loop_index_rzv = 0; loop_index_rzv < num_rzv; loop_index_rzv++) {
-
- // Zero-based, unit-stride index var for rzv.
- idx_t index_rzv = loop_index_rzv;
-
- // This value of index_rzv covers rzv from start_rzv to stop_rzv-1.
- const idx_t start_rzv = begin_rzv + (index_rzv * step_rzv);
- const idx_t stop_rzv = std::min(start_rzv + step_rzv, end_rzv);
+ // This value of index_zv covers zv from start_zv to stop_zv-1.
+ const idx_t start_zv = begin_zv + (index_zv * step_zv);
+ const idx_t stop_zv = std::min(start_zv + step_zv, end_zv);
 
  // Computation.
-  calc_halo(context, rt, start_rnv, start_rxv, start_ryv, start_rzv, stop_rnv, stop_rxv, stop_ryv, stop_rzv);
- }
+  calc_halo(context, t, start_nv, start_xv, start_yv, start_zv, stop_nv, stop_xv, stop_yv, stop_zv);
  }
 // End of generated code.
