@@ -118,7 +118,7 @@ extern "C" {
 // TODO: separate required time-step slots vs. those for
 // temp work areas.
 #ifndef TIME_DIM_SIZE
-#define TIME_DIM_SIZE (2)
+#define TIME_DIM_SIZE (1)
 #endif
 
 // Cluster sizes in vectors.
