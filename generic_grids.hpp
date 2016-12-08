@@ -40,7 +40,9 @@ IN THE SOFTWARE.
 #include <string>
 #include <iostream>
 
+#ifndef CACHE_MODE
 #include <numa.h>
+#endif
 #include <sys/mman.h>
 
 namespace yask {
@@ -68,10 +70,14 @@ namespace yask {
             size_t sz = sizeof(T) * num_elems;
 	    int ret = 0;
             if (use_hbw) {
-	      void *ptr = numa_alloc_onnode(sz + alignment, 1);
-	      uintptr_t mask = ~((uintptr_t) (alignment - 1));
-              _elems = (T*) (((uintptr_t)ptr + (alignment-1)) & mask);
-	      //madvise((void*)_elems, sz, MADV_SEQUENTIAL | MADV_WILLNEED);
+#ifndef CACHE_MODE	      
+	        void *ptr = numa_alloc_onnode(sz + alignment, 1);
+	        uintptr_t mask = ~((uintptr_t) (alignment - 1));
+                _elems = (T*) (((uintptr_t)ptr + (alignment-1)) & mask);
+	        //madvise((void*)_elems, sz, MADV_SEQUENTIAL | MADV_WILLNEED);
+#else
+                ret = posix_memalign((void **)&_elems, alignment, sz);
+#endif
             }
             else
                 ret = posix_memalign((void **)&_elems, alignment, sz);
