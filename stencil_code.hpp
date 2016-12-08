@@ -1,6 +1,7 @@
 // Automatically generated code; do not edit.
 
 ////// Implementation of the 'awp' stencil //////
+#include <fstream>
 
 namespace yask {
 
@@ -155,74 +156,96 @@ struct StencilContext_awp : public StencilContext {
  }
 
  virtual void allocGrids() {
+   //std::ifstream in;
+   //in.open("alloc.txt");
+   int where[17];
+   for(int i=0; i<17; i++)
+     where[i] = 1;//in >> where[i];
+
+   // Good 4 grids:
+   //where[1] = 0;
+   //where[10] = 0;
+   //where[14] = 0;
+   //where[15] = 0;
+
+   // Good 7 grids:
+   where[0] = 0;
+   where[6] = 0;
+   where[7] = 0;
+   where[9] = 0;
+   where[12] = 0;
+   where[14] = 0;
+   where[16] = 0;
+
+
   gridPtrs.clear();
   eqGridPtrs.clear();
-  vel_x = new Grid_TXYZ(dx, dy, dz, vel_x_halo_x + px, vel_x_halo_y + py, vel_x_halo_z + pz, "vel_x");
+  vel_x = new Grid_TXYZ(dx, dy, dz, vel_x_halo_x + px, vel_x_halo_y + py, vel_x_halo_z + pz, "vel_x", std::cout, true);
   gridPtrs.push_back(vel_x);
   eqGridPtrs.push_back(vel_x);
-  vel_y = new Grid_TXYZ(dx, dy, dz, vel_y_halo_x + px, vel_y_halo_y + py, vel_y_halo_z + pz, "vel_y");
+  vel_y = new Grid_TXYZ(dx, dy, dz, vel_y_halo_x + px, vel_y_halo_y + py, vel_y_halo_z + pz, "vel_y", std::cout, true);
   gridPtrs.push_back(vel_y);
   eqGridPtrs.push_back(vel_y);
-  vel_z = new Grid_TXYZ(dx, dy, dz, vel_z_halo_x + px, vel_z_halo_y + py, vel_z_halo_z + pz, "vel_z");
+  vel_z = new Grid_TXYZ(dx, dy, dz, vel_z_halo_x + px, vel_z_halo_y + py, vel_z_halo_z + pz, "vel_z", std::cout, true);
   gridPtrs.push_back(vel_z);
   eqGridPtrs.push_back(vel_z);
-  stress_xx = new Grid_TXYZ(dx, dy, dz, stress_xx_halo_x + px, stress_xx_halo_y + py, stress_xx_halo_z + pz, "stress_xx");
+  stress_xx = new Grid_TXYZ(dx, dy, dz, stress_xx_halo_x + px, stress_xx_halo_y + py, stress_xx_halo_z + pz, "stress_xx", std::cout, true);
   gridPtrs.push_back(stress_xx);
   eqGridPtrs.push_back(stress_xx);
-  stress_yy = new Grid_TXYZ(dx, dy, dz, stress_yy_halo_x + px, stress_yy_halo_y + py, stress_yy_halo_z + pz, "stress_yy");
+  stress_yy = new Grid_TXYZ(dx, dy, dz, stress_yy_halo_x + px, stress_yy_halo_y + py, stress_yy_halo_z + pz, "stress_yy", std::cout, true);
   gridPtrs.push_back(stress_yy);
   eqGridPtrs.push_back(stress_yy);
-  stress_zz = new Grid_TXYZ(dx, dy, dz, stress_zz_halo_x + px, stress_zz_halo_y + py, stress_zz_halo_z + pz, "stress_zz");
+  stress_zz = new Grid_TXYZ(dx, dy, dz, stress_zz_halo_x + px, stress_zz_halo_y + py, stress_zz_halo_z + pz, "stress_zz", std::cout, true);
   gridPtrs.push_back(stress_zz);
   eqGridPtrs.push_back(stress_zz);
-  stress_xy = new Grid_TXYZ(dx, dy, dz, stress_xy_halo_x + px, stress_xy_halo_y + py, stress_xy_halo_z + pz, "stress_xy");
+  stress_xy = new Grid_TXYZ(dx, dy, dz, stress_xy_halo_x + px, stress_xy_halo_y + py, stress_xy_halo_z + pz, "stress_xy", std::cout, true);
   gridPtrs.push_back(stress_xy);
   eqGridPtrs.push_back(stress_xy);
-  stress_xz = new Grid_TXYZ(dx, dy, dz, stress_xz_halo_x + px, stress_xz_halo_y + py, stress_xz_halo_z + pz, "stress_xz");
+  stress_xz = new Grid_TXYZ(dx, dy, dz, stress_xz_halo_x + px, stress_xz_halo_y + py, stress_xz_halo_z + pz, "stress_xz", std::cout, true);
   gridPtrs.push_back(stress_xz);
   eqGridPtrs.push_back(stress_xz);
-  stress_yz = new Grid_TXYZ(dx, dy, dz, stress_yz_halo_x + px, stress_yz_halo_y + py, stress_yz_halo_z + pz, "stress_yz");
+  stress_yz = new Grid_TXYZ(dx, dy, dz, stress_yz_halo_x + px, stress_yz_halo_y + py, stress_yz_halo_z + pz, "stress_yz", std::cout, true);
   gridPtrs.push_back(stress_yz);
   eqGridPtrs.push_back(stress_yz);
-  stress_mem_xx = new Grid_TXYZ(dx, dy, dz, stress_mem_xx_halo_x + px, stress_mem_xx_halo_y + py, stress_mem_xx_halo_z + pz, "stress_mem_xx");
+  stress_mem_xx = new Grid_TXYZ(dx, dy, dz, stress_mem_xx_halo_x + px, stress_mem_xx_halo_y + py, stress_mem_xx_halo_z + pz, "stress_mem_xx", std::cout, where[0]);
   gridPtrs.push_back(stress_mem_xx);
   eqGridPtrs.push_back(stress_mem_xx);
-  stress_mem_yy = new Grid_TXYZ(dx, dy, dz, stress_mem_yy_halo_x + px, stress_mem_yy_halo_y + py, stress_mem_yy_halo_z + pz, "stress_mem_yy");
+  stress_mem_yy = new Grid_TXYZ(dx, dy, dz, stress_mem_yy_halo_x + px, stress_mem_yy_halo_y + py, stress_mem_yy_halo_z + pz, "stress_mem_yy", std::cout, where[1]);
   gridPtrs.push_back(stress_mem_yy);
   eqGridPtrs.push_back(stress_mem_yy);
-  stress_mem_zz = new Grid_TXYZ(dx, dy, dz, stress_mem_zz_halo_x + px, stress_mem_zz_halo_y + py, stress_mem_zz_halo_z + pz, "stress_mem_zz");
+  stress_mem_zz = new Grid_TXYZ(dx, dy, dz, stress_mem_zz_halo_x + px, stress_mem_zz_halo_y + py, stress_mem_zz_halo_z + pz, "stress_mem_zz", std::cout, where[2]);
   gridPtrs.push_back(stress_mem_zz);
   eqGridPtrs.push_back(stress_mem_zz);
-  stress_mem_xy = new Grid_TXYZ(dx, dy, dz, stress_mem_xy_halo_x + px, stress_mem_xy_halo_y + py, stress_mem_xy_halo_z + pz, "stress_mem_xy");
+  stress_mem_xy = new Grid_TXYZ(dx, dy, dz, stress_mem_xy_halo_x + px, stress_mem_xy_halo_y + py, stress_mem_xy_halo_z + pz, "stress_mem_xy", std::cout, where[3]);
   gridPtrs.push_back(stress_mem_xy);
   eqGridPtrs.push_back(stress_mem_xy);
-  stress_mem_xz = new Grid_TXYZ(dx, dy, dz, stress_mem_xz_halo_x + px, stress_mem_xz_halo_y + py, stress_mem_xz_halo_z + pz, "stress_mem_xz");
+  stress_mem_xz = new Grid_TXYZ(dx, dy, dz, stress_mem_xz_halo_x + px, stress_mem_xz_halo_y + py, stress_mem_xz_halo_z + pz, "stress_mem_xz", std::cout, where[4]);
   gridPtrs.push_back(stress_mem_xz);
   eqGridPtrs.push_back(stress_mem_xz);
-  stress_mem_yz = new Grid_TXYZ(dx, dy, dz, stress_mem_yz_halo_x + px, stress_mem_yz_halo_y + py, stress_mem_yz_halo_z + pz, "stress_mem_yz");
+  stress_mem_yz = new Grid_TXYZ(dx, dy, dz, stress_mem_yz_halo_x + px, stress_mem_yz_halo_y + py, stress_mem_yz_halo_z + pz, "stress_mem_yz", std::cout, where[5]);
   gridPtrs.push_back(stress_mem_yz);
   eqGridPtrs.push_back(stress_mem_yz);
-  weight = new Grid_XYZ(dx, dy, dz, weight_halo_x + px, weight_halo_y + py, weight_halo_z + pz, "weight");
+  weight = new Grid_XYZ(dx, dy, dz, weight_halo_x + px, weight_halo_y + py, weight_halo_z + pz, "weight", std::cout, where[6]);
   gridPtrs.push_back(weight);
-  tau2 = new Grid_XYZ(dx, dy, dz, tau2_halo_x + px, tau2_halo_y + py, tau2_halo_z + pz, "tau2");
+  tau2 = new Grid_XYZ(dx, dy, dz, tau2_halo_x + px, tau2_halo_y + py, tau2_halo_z + pz, "tau2", std::cout, where[7]);
   gridPtrs.push_back(tau2);
-  anelastic_ap = new Grid_XYZ(dx, dy, dz, anelastic_ap_halo_x + px, anelastic_ap_halo_y + py, anelastic_ap_halo_z + pz, "anelastic_ap");
+  anelastic_ap = new Grid_XYZ(dx, dy, dz, anelastic_ap_halo_x + px, anelastic_ap_halo_y + py, anelastic_ap_halo_z + pz, "anelastic_ap", std::cout, where[8]);
   gridPtrs.push_back(anelastic_ap);
-  anelastic_as_diag = new Grid_XYZ(dx, dy, dz, anelastic_as_diag_halo_x + px, anelastic_as_diag_halo_y + py, anelastic_as_diag_halo_z + pz, "anelastic_as_diag");
+  anelastic_as_diag = new Grid_XYZ(dx, dy, dz, anelastic_as_diag_halo_x + px, anelastic_as_diag_halo_y + py, anelastic_as_diag_halo_z + pz, "anelastic_as_diag", std::cout, where[9]);
   gridPtrs.push_back(anelastic_as_diag);
-  anelastic_xy = new Grid_XYZ(dx, dy, dz, anelastic_xy_halo_x + px, anelastic_xy_halo_y + py, anelastic_xy_halo_z + pz, "anelastic_xy");
+  anelastic_xy = new Grid_XYZ(dx, dy, dz, anelastic_xy_halo_x + px, anelastic_xy_halo_y + py, anelastic_xy_halo_z + pz, "anelastic_xy", std::cout, where[10]);
   gridPtrs.push_back(anelastic_xy);
-  anelastic_xz = new Grid_XYZ(dx, dy, dz, anelastic_xz_halo_x + px, anelastic_xz_halo_y + py, anelastic_xz_halo_z + pz, "anelastic_xz");
+  anelastic_xz = new Grid_XYZ(dx, dy, dz, anelastic_xz_halo_x + px, anelastic_xz_halo_y + py, anelastic_xz_halo_z + pz, "anelastic_xz", std::cout, where[11]);
   gridPtrs.push_back(anelastic_xz);
-  anelastic_yz = new Grid_XYZ(dx, dy, dz, anelastic_yz_halo_x + px, anelastic_yz_halo_y + py, anelastic_yz_halo_z + pz, "anelastic_yz");
+  anelastic_yz = new Grid_XYZ(dx, dy, dz, anelastic_yz_halo_x + px, anelastic_yz_halo_y + py, anelastic_yz_halo_z + pz, "anelastic_yz", std::cout, where[12]);
   gridPtrs.push_back(anelastic_yz);
-  lambda = new Grid_XYZ(dx, dy, dz, lambda_halo_x + px, lambda_halo_y + py, lambda_halo_z + pz, "lambda");
+  lambda = new Grid_XYZ(dx, dy, dz, lambda_halo_x + px, lambda_halo_y + py, lambda_halo_z + pz, "lambda", std::cout, where[13]);
   gridPtrs.push_back(lambda);
-  rho = new Grid_XYZ(dx, dy, dz, rho_halo_x + px, rho_halo_y + py, rho_halo_z + pz, "rho");
+  rho = new Grid_XYZ(dx, dy, dz, rho_halo_x + px, rho_halo_y + py, rho_halo_z + pz, "rho", std::cout, where[14]);
   gridPtrs.push_back(rho);
-  mu = new Grid_XYZ(dx, dy, dz, mu_halo_x + px, mu_halo_y + py, mu_halo_z + pz, "mu");
+  mu = new Grid_XYZ(dx, dy, dz, mu_halo_x + px, mu_halo_y + py, mu_halo_z + pz, "mu", std::cout, where[15]);
   gridPtrs.push_back(mu);
-  sponge = new Grid_XYZ(dx, dy, dz, sponge_halo_x + px, sponge_halo_y + py, sponge_halo_z + pz, "sponge");
+  sponge = new Grid_XYZ(dx, dy, dz, sponge_halo_x + px, sponge_halo_y + py, sponge_halo_z + pz, "sponge", std::cout, where[16]);
   gridPtrs.push_back(sponge);
  }
 

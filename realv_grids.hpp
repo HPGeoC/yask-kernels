@@ -120,8 +120,8 @@ namespace yask {
         RealVecGrid_XYZ(idx_t dx, idx_t dy, idx_t dz,
                       idx_t px, idx_t py, idx_t pz,
                         const std::string& name,
-                        std::ostream& msg_stream = std::cout) :
-            RealVecGridBase(name, &_data),
+                        std::ostream& msg_stream = std::cout, bool use_hbw=false) :
+    	    RealVecGridBase(name, &_data),
 
             // Round up each dim to multiple of dim in real_vec_t.
             _dx(ROUND_UP(dx, VLEN_X)),
@@ -143,7 +143,7 @@ namespace yask {
             _data(_dxv + 2*_pxv,
                   _dyv + 2*_pyv,
                   _dzv + 2*_pzv,
-                  ALLOC_ALIGNMENT)
+                  ALLOC_ALIGNMENT, use_hbw)
         {
             _data.print_info(name, msg_stream);
 
@@ -360,8 +360,8 @@ namespace yask {
         RealVecGrid_NXYZ(idx_t dn, idx_t dx, idx_t dy, idx_t dz,
                          idx_t pn, idx_t px, idx_t py, idx_t pz,
                          const std::string& name,
-                         std::ostream& msg_stream = std::cout) :
-            RealVecGridBase(name, &_data),
+                         std::ostream& msg_stream = std::cout, bool use_hbw=false) :
+	  RealVecGridBase(name, &_data),
 
             // Round up each dim to multiple of dim in real_vec_t.
             _dn(ROUND_UP(dn, VLEN_N)),
@@ -388,7 +388,7 @@ namespace yask {
                   _dxv + 2*_pxv,
                   _dyv + 2*_pyv,
                   _dzv + 2*_pzv,
-                  ALLOC_ALIGNMENT)
+                  ALLOC_ALIGNMENT, use_hbw)
         {
             _data.print_info(name, msg_stream);
         }
@@ -606,10 +606,10 @@ namespace yask {
         RealVecGrid_TXYZ(idx_t dx, idx_t dy, idx_t dz,
                          idx_t px, idx_t py, idx_t pz,
                          const std::string& name,
-                         std::ostream& msg_stream = std::cout) :
+                         std::ostream& msg_stream = std::cout, bool use_hbw=false) :
             RealVecGrid_NXYZ<LayoutFn>(TIME_DIM_SIZE, dx, dy, dz,
                                        0, px, py, pz,
-                                       name, msg_stream)
+                                       name, msg_stream, use_hbw)
         {
             if (VLEN_N > 1) {
                 std::cerr << "Sorry, vectorizing in N dimension not yet supported." << std::endl;
@@ -716,10 +716,10 @@ namespace yask {
         RealVecGrid_TNXYZ(idx_t dn, idx_t dx, idx_t dy, idx_t dz,
                           idx_t pn, idx_t px, idx_t py, idx_t pz,
                           const std::string& name,
-                          std::ostream& msg_stream = std::cout) :
+                          std::ostream& msg_stream = std::cout, bool use_hbw=false) :
             RealVecGrid_NXYZ<LayoutFn>(TIME_DIM_SIZE * dn, dx, dy, dz,
                                        pn, px, py, pz,
-                                       name, msg_stream),
+                                       name, msg_stream, use_hbw),
             _dn(dn)
         {
             if (VLEN_N > 1) {

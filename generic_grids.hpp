@@ -40,6 +40,9 @@ IN THE SOFTWARE.
 #include <string>
 #include <iostream>
 
+#include <numa.h>
+#include <sys/mman.h>
+
 namespace yask {
 
 #include "layouts.hpp"
@@ -59,11 +62,20 @@ namespace yask {
         const static size_t _def_alignment = 64;
 
     public:
-        GenericGridBase(idx_t num_elems, size_t alignment=_def_alignment) :
-            _num_elems(num_elems)
+      GenericGridBase(idx_t num_elems, size_t alignment=_def_alignment, bool use_hbw=false) :
+	  _num_elems(num_elems)
         {
             size_t sz = sizeof(T) * num_elems;
-            int ret = posix_memalign((void **)&_elems, alignment, sz);
+	    int ret = 0;
+            if (use_hbw) {
+	      void *ptr = numa_alloc_onnode(sz + alignment, 1);
+	      uintptr_t mask = ~((uintptr_t) (alignment - 1));
+              _elems = (T*) (((uintptr_t)ptr + (alignment-1)) & mask);
+	      //madvise((void*)_elems, sz, MADV_SEQUENTIAL | MADV_WILLNEED);
+            }
+            else
+                ret = posix_memalign((void **)&_elems, alignment, sz);
+
             if (ret) {
 
                 // TODO: provide option to throw an exception.
@@ -74,7 +86,7 @@ namespace yask {
 
         // Dealloc memory.
         virtual ~GenericGridBase() {
-            free(_elems);
+	  //free(_elems);
         }
 
         // Get number of elements with padding.
@@ -162,8 +174,9 @@ namespace yask {
 
         // Print some info.
         virtual void print_info(const std::string& name, std::ostream& os = std::cout) {
+	  /* PPP
             os << "Scalar ";
-            GenericGridBase<T>::print_info(name, os);
+            GenericGridBase<T>::print_info(name, os);*/
         }
 
         // Access element.
@@ -218,8 +231,8 @@ namespace yask {
 
         // Construct an array of length d1.
         GenericGrid1d(idx_t d1,
-                      size_t alignment=GenericGridBase<T>::_def_alignment) :
-            GenericGridBase<T>(d1, alignment),
+                      size_t alignment=GenericGridBase<T>::_def_alignment, bool use_hbw=false) :
+	  GenericGridBase<T>(d1, alignment, use_hbw),
             _layout(d1) { }
 
         // Get original parameters.
@@ -227,8 +240,9 @@ namespace yask {
 
         // Print some info.
         virtual void print_info(const std::string& name, std::ostream& os = std::cout) {
+	  /* PPP
             os << "1D (" << get_d1() << ") ";
-            GenericGridBase<T>::print_info(name, os);
+            GenericGridBase<T>::print_info(name, os);*/
         }
 
         // Get 1D index.
@@ -306,8 +320,8 @@ namespace yask {
 
         // Construct a grid of dimensions d1 x d2.
         GenericGrid2d(idx_t d1, idx_t d2,
-                      size_t alignment=GenericGridBase<T>::_def_alignment) :
-            GenericGridBase<T>(d1 * d2, alignment),
+                      size_t alignment=GenericGridBase<T>::_def_alignment, bool use_hbw=false) :
+	  GenericGridBase<T>(d1 * d2, alignment, use_hbw),
             _layout(d1, d2) { }
 
         // Get original parameters.
@@ -316,8 +330,9 @@ namespace yask {
 
         // Print some info.
         virtual void print_info(const std::string& name, std::ostream& os = std::cout) {
+	  /* PPP
             os << "2D (" << get_d1() << " * " << get_d2() << ") ";
-            GenericGridBase<T>::print_info(name, os);
+            GenericGridBase<T>::print_info(name, os);*/
         }
 
         // Get 1D index.
@@ -399,8 +414,8 @@ namespace yask {
 
         // Construct a grid of dimensions d1*d2*d3.
         GenericGrid3d(idx_t d1, idx_t d2, idx_t d3,
-                      size_t alignment=GenericGridBase<T>::_def_alignment) :
-            GenericGridBase<T>(d1 * d2 * d3, alignment),
+                      size_t alignment=GenericGridBase<T>::_def_alignment, bool use_hbw=false) :
+	  GenericGridBase<T>(d1 * d2 * d3, alignment, use_hbw),
             _layout(d1, d2, d3) { }
     
         // Get original parameters.
@@ -410,8 +425,9 @@ namespace yask {
 
         // Print some info.
         virtual void print_info(const std::string& name, std::ostream& os = std::cout) {
+	  /* PPP
             os << "3D (" << get_d1() << " * " << get_d2() << " * " << get_d3() << ") ";
-            GenericGridBase<T>::print_info(name, os);
+            GenericGridBase<T>::print_info(name, os);*/
         }
 
         // Get 1D index.
@@ -498,8 +514,8 @@ namespace yask {
 
         // Construct a grid of dimensions d1 * d2 * d3 * d4.
         GenericGrid4d(idx_t d1, idx_t d2, idx_t d3, idx_t d4,
-                      size_t alignment=GenericGridBase<T>::_def_alignment) :
-            GenericGridBase<T>(d1 * d2 * d3 * d4, alignment),
+                      size_t alignment=GenericGridBase<T>::_def_alignment, bool use_hbw=false) :
+	  GenericGridBase<T>(d1 * d2 * d3 * d4, alignment, use_hbw),
             _layout(d1, d2, d3, d4) { }
 
         // Get original parameters.
@@ -510,8 +526,9 @@ namespace yask {
 
         // Print some info.
         virtual void print_info(const std::string& name, std::ostream& os = std::cout) {
+	  /* PPP
             os << "4D (" << get_d1() << " * " << get_d2() << " * " << get_d3() << " * " << get_d4() << ") ";
-            GenericGridBase<T>::print_info(name, os);
+            GenericGridBase<T>::print_info(name, os);*/
         }
 
         // Get 1D index.

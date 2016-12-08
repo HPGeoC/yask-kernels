@@ -159,7 +159,7 @@ extern "C" {
 #define DEF_WAVEFRONT_REGION_SIZE (512)
 #endif
 #ifndef DEF_BLOCK_SIZE
-#define DEF_BLOCK_SIZE (64)
+#define DEF_BLOCK_SIZE (8)
 #endif
 
 // Memory-accessing code.
